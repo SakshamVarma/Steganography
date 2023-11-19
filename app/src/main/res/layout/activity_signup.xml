@@ -18,33 +18,6 @@
         android:src="@drawable/login_header" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/name_et"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:focusedByDefault="false"
-        android:hint="Full Name"
-        app:endIconMode="clear_text"
-        app:errorEnabled="true"
-        android:layout_marginTop="100dp"
-        android:paddingHorizontal="20dp"
-        app:hintTextColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:startIconDrawable="@drawable/ic_baseline_account_circle_24"
-        app:startIconTint="@color/black">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusedByDefault="false"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_et"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
@@ -54,67 +27,74 @@
         android:hint="Email"
         app:endIconMode="clear_text"
         app:errorEnabled="true"
+        android:layout_marginTop="100dp"
         android:paddingHorizontal="20dp"
         app:hintTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_et"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:startIconDrawable="@drawable/ic_baseline_email_24"
         app:startIconTint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextTextEmailAddress"
+            android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusedByDefault="false"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/phone_et"
+        android:id="@+id/password_et"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="0"
         android:focusedByDefault="false"
-        android:hint="Phone Number"
-        android:minEms="10"
-        android:paddingHorizontal="20dp"
+        android:hint="Enter Password"
         app:endIconMode="clear_text"
         app:errorEnabled="true"
+        android:paddingHorizontal="20dp"
         app:hintTextColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_et"
-        app:layout_constraintWidth_percent="0.72"
-        app:prefixText="+91"
-        app:startIconDrawable="@drawable/ic_baseline_phone_24"
+        app:startIconDrawable="@drawable/ic_baseline_lock_24"
         app:startIconTint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextPhone"
+            android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusedByDefault="false"
-            android:inputType="phone"
-            android:maxLength="10" />
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/otpButton"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginEnd="20dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="Send OTP"
-        android:textAppearance="@style/Widget.MaterialComponents.Button"
-        android:textSize="15sp"
-        android:layout_marginTop="3dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/re_password_et"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:focusedByDefault="false"
+        android:hint="Re Enter Password"
+        app:endIconMode="clear_text"
+        app:errorEnabled="true"
+        android:paddingHorizontal="20dp"
+        app:hintTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0"
-        app:layout_constraintTop_toBottomOf="@+id/email_et"
-        app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.25" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_et"
+        app:startIconDrawable="@drawable/ic_baseline_lock_24"
+        app:startIconTint="@color/black">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextRePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusedByDefault="false"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/textViewSignup"
@@ -126,41 +106,8 @@
         android:layout_marginBottom="12dp"
         android:textColor="@color/black"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/name_et"
+        app:layout_constraintBottom_toTopOf="@+id/email_et"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/otp_et"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:layout_weight="0"
-        android:focusedByDefault="false"
-        android:hint="One Time Password"
-        android:minEms="10"
-        android:paddingHorizontal="20dp"
-        app:counterEnabled="true"
-        app:counterMaxLength="6"
-        app:endIconMode="clear_text"
-        app:errorEnabled="true"
-        app:hintTextColor="@color/black"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_et"
-        app:layout_constraintWidth_percent="0.72"
-        app:startIconDrawable="@drawable/ic_baseline_lock_24"
-        app:startIconTint="@color/black">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusedByDefault="false"
-            android:inputType="number"
-            android:maxLength="6" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
 
     <Button
@@ -174,12 +121,12 @@
         android:textAppearance="@style/Widget.MaterialComponents.Button"
         android:textColor="@color/black"
         android:textSize="22sp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.08"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/otp_et"
+        app:layout_constraintTop_toBottomOf="@+id/re_password_et"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.45" />
 
