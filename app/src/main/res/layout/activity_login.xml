@@ -9,10 +9,8 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.27"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/login_header" />
@@ -22,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="20dp"
         android:fontFamily="sans-serif-medium"
         android:text="LOGIN"
         android:textColor="@color/black"
@@ -40,14 +38,16 @@
         android:hint="Email"
         app:endIconMode="clear_text"
         app:errorEnabled="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginBottom="100dp"
         android:paddingHorizontal="20dp"
         app:hintTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:startIconDrawable="@drawable/ic_baseline_email_24"
-        app:startIconTint="@color/black">
+        app:startIconTint="@color/black"
+        app:endIconTint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextEmail"
@@ -65,7 +65,7 @@
         android:layout_weight="0"
         android:focusedByDefault="false"
         android:hint="Enter Password"
-        app:endIconMode="clear_text"
+        app:endIconMode="password_toggle"
         app:errorEnabled="true"
         android:paddingHorizontal="20dp"
         app:hintTextColor="@color/black"
@@ -73,7 +73,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_et"
         app:startIconDrawable="@drawable/ic_baseline_lock_24"
-        app:startIconTint="@color/black">
+        app:startIconTint="@color/black"
+        app:endIconTint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextPassword"
@@ -93,7 +94,7 @@
         android:fontFamily="sans-serif-medium"
         android:text="LOGIN"
         android:textAppearance="@style/Widget.MaterialComponents.Button"
-        android:textColor="@color/black"
+        android:textColor="@color/cream"
         android:textSize="22sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"

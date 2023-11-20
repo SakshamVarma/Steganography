@@ -1,6 +1,9 @@
 package com.example.steganography
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -32,29 +35,56 @@ class signupActivity : AppCompatActivity() {
             val password = binding.editTextPassword.text.toString().trim()
             val confirm_password = binding.editTextRePassword.text.toString().trim()
 
-            if(email.isNotEmpty() && password.isNotEmpty() && confirm_password.isNotEmpty())
-            {
-                if (password == confirm_password){
+            if(isOnline(this)){
+
+            if (email.isNotEmpty() && password.isNotEmpty() && confirm_password.isNotEmpty()) {
+                if (password == confirm_password) {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                        if(it.isSuccessful){
+                        if (it.isSuccessful) {
                             val loginIntent = Intent(this, loginActivity::class.java)
                             startActivity(loginIntent)
-                        }
-                        else{
+                        } else {
                             Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
                         }
                     }
-                }
-                else{
+                } else {
                     Toast.makeText(this, "Password Doesn't Match", Toast.LENGTH_SHORT).show()
                 }
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, "Empty Fields Not Allowed", Toast.LENGTH_SHORT).show()
+            }
+        }
+            else{
+                Toast.makeText(this, "You're Offline", Toast.LENGTH_SHORT).show()
             }
         }
 
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (auth.currentUser != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+    }
+
+    private fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if (capabilities != null) {
+            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                return true
+            }
+        }
+        return false
     }
 }

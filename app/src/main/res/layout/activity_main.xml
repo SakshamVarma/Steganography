@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@color/darkest_grey"
+        />
+
+
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -13,14 +20,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomNavView"
-        android:layout_margin="5dp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginVertical="10dp"
         app:cardCornerRadius="10dp"
-        app:cardBackgroundColor="@color/dark_grey"
+        app:cardBackgroundColor="@color/cream"
         >
         <FrameLayout
             android:id="@+id/frameLayout"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             >
         </FrameLayout>
 
@@ -49,12 +57,12 @@
             android:gravity="center">
 
             <Button
-                android:id="@+id/deliveryButton"
+                android:id="@+id/encryptButton"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_weight="0.8"
+                android:layout_weight="0.6"
                 android:backgroundTint="@color/teal"
                 android:text="Encrypt"
                 android:textAllCaps="false"
@@ -63,12 +71,12 @@
                 />
 
             <Button
-                android:id="@+id/diningButton"
+                android:id="@+id/decryptButton"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_weight="0.8"
+                android:layout_weight="0.6"
                 android:backgroundTint="@color/teal"
                 android:text="Decrypt"
                 android:textAllCaps="false"
@@ -76,12 +84,22 @@
                 android:textSize="17sp" />
 
             <ImageButton
-                android:id="@+id/settingsButton"
+                android:id="@+id/listButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
                 android:backgroundTint="@color/teal"
                 android:src="@drawable/ic_baseline_image_24"
+                android:layout_gravity="center"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/logOutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:backgroundTint="@color/teal"
+                android:src="@drawable/ic_baseline_logout_24"
                 android:layout_gravity="center"
                 app:tint="@color/white" />
 

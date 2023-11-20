@@ -8,8 +8,11 @@
         <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/drawable/ic_baseline_lock_24.xml" value="0.1675" />
         <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/drawable/login_header.xml" value="0.128" />
         <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/activity_login.xml" value="0.2" />
-        <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
-        <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/activity_signup.xml" value="0.25416666666666665" />
+        <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/activity_signup.xml" value="0.2" />
+        <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/fragment_decrypt.xml" value="0.25416666666666665" />
+        <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/fragment_encrypt.xml" value="0.25416666666666665" />
+        <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/layout/fragment_list.xml" value="0.25416666666666665" />
         <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1675" />
         <entry key="..\:/Projects/AndroidProjects/Steganography/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1675" />
       </map>
