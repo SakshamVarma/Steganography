@@ -12,15 +12,94 @@
         android:layout_height="match_parent"
         android:src="@color/cream"
         />
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textSize="20sp"
-        android:text="Decrypt Fragment" />
+        android:orientation="vertical"
+        android:weightSum="7"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        >
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:src="@color/darkest_grey"
+            android:layout_weight="4" />
+        <Button
+            android:id="@+id/selectImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="10dp"
+            android:text="Image"
+            android:layout_marginVertical="10dp"
+            android:layout_weight="0.2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.5"
+            android:gravity="bottom"
+            android:text="Secret Key"
+            android:textSize="20sp"
+            app:fontFamily="sans-serif-black"
+            app:textAllCaps="true" />
+
+        <EditText
+            android:id="@+id/editTextKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|top"
+            android:layout_weight="0.25"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:hint="Enter secret key"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/decryptButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="10dp"
+            android:text="Decrypt"
+            android:layout_marginVertical="10dp"
+            android:layout_weight="0.2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.5"
+            android:gravity="bottom"
+            android:text="Message"
+            android:textSize="20sp"
+            app:fontFamily="sans-serif-black"
+            app:textAllCaps="true"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:id="@+id/TextViewTextMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|top"
+            android:layout_weight="1.35"
+            android:visibility="visible"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:hint="Enter Message"
+             />
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
