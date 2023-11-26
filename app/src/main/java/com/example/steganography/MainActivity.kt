@@ -14,6 +14,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var ivVal:ByteArray
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -65,5 +67,13 @@ class MainActivity : AppCompatActivity() {
 
             }
             .show()
+    }
+
+    fun updateIV(t:ByteArray){
+        ivVal = t
+    }
+
+    fun returnIV() : ByteArray{
+        return ivVal
     }
 }
