@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +19,6 @@ import java.io.FileDescriptor
 import java.io.IOException
 import java.nio.charset.StandardCharsets.UTF_8
 import java.security.MessageDigest
-import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import javax.crypto.Cipher
@@ -29,6 +29,7 @@ class EncryptFragment : Fragment() {
     private var _binding: FragmentEncryptBinding? = null
     private val binding get() =_binding!!
     lateinit var ivValue: ByteArray
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +62,6 @@ class EncryptFragment : Fragment() {
 
         binding.encryptButton.setOnClickListener {
             encryptMessage()
-
         }
 
 
@@ -161,5 +161,6 @@ class EncryptFragment : Fragment() {
         }
         return sb.toString()
     }
+
 
 }

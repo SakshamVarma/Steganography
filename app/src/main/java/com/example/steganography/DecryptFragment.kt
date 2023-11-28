@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,6 @@ import java.io.FileDescriptor
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import javax.crypto.Cipher
@@ -31,6 +31,7 @@ class DecryptFragment : Fragment() {
     private var _binding: FragmentDecryptBinding? = null
     private val binding get() =_binding!!
     lateinit var ivValue: ByteArray
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +77,9 @@ class DecryptFragment : Fragment() {
 
 
             //val tempiv : String? = sharedPreferences.getString("ivVal","default")
-            val temp = binding.editTextTextMultiLine
-            temp.setText(tempMessage.toString())
+
+            //val temp = binding.editTextTextMultiLine
+            //temp.setText(tempMessage.toString())
 
                 decryptMessage(tempMessage)
 
@@ -145,13 +147,13 @@ class DecryptFragment : Fragment() {
         return secretKeySpec
     }
 
-    private fun buildString(text: ByteArray, status: String): String{
-        val sb = StringBuilder()
-        for (char in text) {
-            sb.append(char.toInt().toChar())
-        }
-        return sb.toString()
-    }
-
+//    private fun buildString(text: ByteArray, status: String): String{
+//        val sb = StringBuilder()
+//        for (char in text) {
+//            sb.append(char.toInt().toChar())
+//        }
+//        return sb.toString()
+//    }
 
 }
+

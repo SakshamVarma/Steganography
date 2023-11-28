@@ -20,16 +20,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical"
-        android:weightSum="7"
+        android:weightSum="5"
         android:gravity="center"
         android:layout_margin="10dp"
         >
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:src="@color/darkest_grey"
-            android:layout_weight="4" />
+        <androidx.cardview.widget.CardView
+            android:layout_width="200dp"
+            android:layout_height="150dp"
+            app:cardCornerRadius = "200dp"
+            android:layout_weight="0.9">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity = "center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_image"
+                />
+        </androidx.cardview.widget.CardView>
         <Button
             android:id="@+id/selectImageButton"
             android:layout_width="wrap_content"
@@ -49,7 +57,8 @@
             android:gravity="bottom"
             android:text="Message"
             android:textSize="20sp"
-            app:fontFamily="sans-serif-black"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
             app:textAllCaps="true" />
 
         <EditText
@@ -72,7 +81,8 @@
             android:gravity="bottom"
             android:text="Secret Key"
             android:textSize="20sp"
-            app:fontFamily="sans-serif-black"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
             app:textAllCaps="true" />
 
         <EditText
