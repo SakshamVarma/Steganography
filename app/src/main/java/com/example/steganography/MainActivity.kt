@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
     private lateinit var ivVal:ByteArray
+    private lateinit var encryptedData: ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,5 +76,13 @@ class MainActivity : AppCompatActivity() {
 
     fun returnIV() : ByteArray{
         return ivVal
+    }
+
+    fun updateEncData(t:ByteArray){
+        encryptedData = t
+    }
+
+    fun returnEncData() : ByteArray{
+        return encryptedData
     }
 }

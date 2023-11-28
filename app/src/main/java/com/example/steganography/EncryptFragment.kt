@@ -18,6 +18,7 @@ import java.io.FileDescriptor
 import java.io.IOException
 import java.nio.charset.StandardCharsets.UTF_8
 import java.security.MessageDigest
+import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import javax.crypto.Cipher
@@ -95,6 +96,7 @@ class EncryptFragment : Fragment() {
         val message = binding.editTextTextMultiLine.text.toString().trim()
         val compressMessage = gzip(message)
         val plainText = compressMessage
+
         val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("ivValue",
             Context.MODE_PRIVATE)
         val edit : SharedPreferences.Editor = sharedPreferences.edit()
@@ -105,15 +107,20 @@ class EncryptFragment : Fragment() {
         val cipherText = cipher.doFinal(plainText)
         ivValue = cipher.iv
         edit.putString("ivVal",ivValue.toString())
-        edit.putString("cipherText",cipherText.toString())
+        //val temp = Base64.getEncoder().encodeToString(cipherText)
+        println("from encrypt : ${cipherText.decodeToString()}")
+        edit.putString("cipherText",cipherText.decodeToString())
         edit.apply()
 
         val myAct = activity as? MainActivity
         myAct!!.updateIV(ivValue)
+        myAct.updateEncData(cipherText)
+
+        val getData = myAct.returnEncData()
 
         //Toast.makeText(activity,ivValue.toString() + " " + cipherText.toString(),Toast.LENGTH_SHORT).show()
-        Toast.makeText(activity,cipherText.toString(),Toast.LENGTH_SHORT).show()
-        decryptMessage(cipherText)
+        //Toast.makeText(activity,cipherText.toString(),Toast.LENGTH_SHORT).show()
+        decryptMessage(getData)
 
     }
 

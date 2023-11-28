@@ -5,21 +5,22 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import com.example.steganography.databinding.FragmentDecryptBinding
 import java.io.ByteArrayOutputStream
-import java.io.Console
 import java.io.FileDescriptor
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import javax.crypto.Cipher
@@ -36,6 +37,7 @@ class DecryptFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,14 +64,24 @@ class DecryptFragment : Fragment() {
         binding.decryptButton.setOnClickListener {
             val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("ivValue",
                 Context.MODE_PRIVATE)
-            val tempMessage : String? = sharedPreferences.getString("cipherText","default")
+            val tempMessage1 : String? = sharedPreferences.getString("cipherText","default")
+
+            val myAct = activity as? MainActivity
+            val tempMessage = myAct!!.returnEncData()
+
+
+            println("from with conversion : ${tempMessage1!!.toByteArray(Charsets.UTF_8)}")
+            println("from shared pref : ${tempMessage1}")
+            println("from without conversion : ${tempMessage}")
+
+
             //val tempiv : String? = sharedPreferences.getString("ivVal","default")
             val temp = binding.editTextTextMultiLine
-            temp.setText(tempMessage)
+            temp.setText(tempMessage.toString())
 
-                decryptMessage(tempMessage.toString().toByteArray())
+                decryptMessage(tempMessage)
 
-            Toast.makeText(activity,tempMessage.toString(),Toast.LENGTH_SHORT).show()
+            //Toast.makeText(activity,tempMessage.toString(),Toast.LENGTH_SHORT).show()
         }
 
         return binding.root
