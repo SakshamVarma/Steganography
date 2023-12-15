@@ -95,7 +95,8 @@ class DecryptFragment : Fragment() {
                 val baseStr = ansArr.toString(Charsets.UTF_8)
                 println("Base Str : $baseStr")
                 val decodedStr = Base64.decode(baseStr,Base64.DEFAULT)
-                val decompressedStr = ungzip(decodedStr)
+                val decryptStr = decryptMessage(decodedStr)
+                val decompressedStr = ungzip(decryptStr)
 
                 Toast.makeText(activity,decompressedStr,Toast.LENGTH_SHORT).show()
             }
@@ -127,7 +128,7 @@ class DecryptFragment : Fragment() {
     private fun ungzip(content: ByteArray): String =
         GZIPInputStream(content.inputStream()).bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
-    private fun decryptMessage(dataToDecrypt:ByteArray) {
+    private fun decryptMessage(dataToDecrypt:ByteArray):ByteArray {
 
         val myAct = activity as? MainActivity
         ivValue = myAct!!.returnIV()
@@ -138,9 +139,10 @@ class DecryptFragment : Fragment() {
         val cipherText = cipher.doFinal(dataToDecrypt)
         //ivValue = cipher.iv
         //val decryptedMessage = buildString(cipherText, "decrypt")
-        val decompressedMessage = ungzip(cipherText)
+        //val decompressedMessage = ungzip(cipherText)
 
-        Toast.makeText(activity,decompressedMessage, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(activity,decompressedMessage, Toast.LENGTH_SHORT).show()
+        return cipherText
     }
 
 

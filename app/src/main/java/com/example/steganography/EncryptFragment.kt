@@ -129,8 +129,6 @@ class EncryptFragment : Fragment() {
 
 
         edit.putString("ivVal",ivValue.toString())
-        //val temp = Base64.getEncoder().encodeToString(cipherText)
-        //println("from encrypt : ${String(cipherText)}")
         edit.putString("cipherText",cipherText.decodeToString())
         edit.apply()
 
@@ -143,13 +141,12 @@ class EncryptFragment : Fragment() {
         val bitmap = Bitmap.createScaledBitmap(bitmapOriginal, 640, 480, true)
         println("CipherText $cipherText")
 
-        //val input = "Hello my name is Saksham"
-        //val cipherString = buildString(cipherText,"encrypt")
-        //val input = binding.editTextTextMultiLine.text.toString().trim()
-        //println("Cipher String : ${cipherString}")
-        val compressedMessage = gzip(message)
-        val byteArr = message.toByteArray()
-        val modifiedBitmap = embed(bitmap, compressedMessage)
+
+        //val compressedMessage = gzip(message)
+        //val modifiedBitmap = embed(bitmap, compressedMessage)
+
+        val modifiedBitmap = embed(bitmap, cipherText)
+
         saveBitmapImage(modifiedBitmap)
         storeMessage(message)
 
@@ -158,21 +155,6 @@ class EncryptFragment : Fragment() {
 
         //decryptMessage(getData)
 
-    }
-
-    private fun decryptMessage(dataToDecrypt:ByteArray) {
-
-        val myAct = activity as? MainActivity
-        ivValue = myAct!!.returnIV()
-
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        val key = generateKey(binding.editTextKey.text.toString())
-        cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(ivValue))
-        val cipherText = cipher.doFinal(dataToDecrypt)
-        val decryptedMessage = buildString(cipherText, "decrypt")
-        val decompressedMessage = ungzip(cipherText)
-
-        Toast.makeText(activity,decompressedMessage,Toast.LENGTH_SHORT).show()
     }
 
 
