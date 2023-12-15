@@ -1,22 +1,30 @@
 package com.example.steganography
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Base64
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.graphics.drawable.toBitmap
 import com.example.steganography.databinding.FragmentEncryptBinding
-import java.io.ByteArrayOutputStream
-import java.io.FileDescriptor
-import java.io.IOException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.io.*
 import java.nio.charset.StandardCharsets.UTF_8
 import java.security.MessageDigest
 import java.util.zip.GZIPInputStream
@@ -29,6 +37,9 @@ class EncryptFragment : Fragment() {
     private var _binding: FragmentEncryptBinding? = null
     private val binding get() =_binding!!
     lateinit var ivValue: ByteArray
+    //lateinit var inputBitmap:Bitmap
+    lateinit var finalImage: Bitmap
+    private var db = Firebase.firestore
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +57,17 @@ class EncryptFragment : Fragment() {
         val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
             val galleryUri = it
             try{
-                val bitmap = uriToBitmap(galleryUri!!)
-                binding.imageView.setImageBitmap(bitmap)
+                val inputBitmap = uriToBitmap(galleryUri!!)
+//                if (bitmap != null) {
+//                    inputImage = bitmap
+//                    finalImage = encodeLSB(inputImage, "Saksham")
+//                    //val returnMes = decodeLSB(finalImage)
+//                    //Toast.makeText(activity,returnMes,Toast.LENGTH_SHORT).show()
+//                }
+                binding.imageView.setImageBitmap(inputBitmap)
+
+
+
             }catch(e:Exception){
                 e.printStackTrace()
             }
@@ -61,7 +81,17 @@ class EncryptFragment : Fragment() {
 
 
         binding.encryptButton.setOnClickListener {
-            encryptMessage()
+            val imageViewObj = binding.imageView.drawable
+            if(imageViewObj != null)
+            {
+                val bitmapOriginal: Bitmap = binding.imageView.drawable.toBitmap()
+                encryptMessage(bitmapOriginal)
+            }
+            else
+            {
+                Toast.makeText(activity,"Image not selected",Toast.LENGTH_SHORT).show()
+            }
+
         }
 
 
@@ -92,7 +122,7 @@ class EncryptFragment : Fragment() {
     private fun ungzip(content: ByteArray): String =
         GZIPInputStream(content.inputStream()).bufferedReader(UTF_8).use { it.readText() }
 
-    private fun encryptMessage() {
+    private fun encryptMessage(bitmapOriginal:Bitmap) {
         val message = binding.editTextTextMultiLine.text.toString().trim()
         val compressMessage = gzip(message)
         val plainText = compressMessage
@@ -106,9 +136,11 @@ class EncryptFragment : Fragment() {
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val cipherText = cipher.doFinal(plainText)
         ivValue = cipher.iv
+
+
         edit.putString("ivVal",ivValue.toString())
         //val temp = Base64.getEncoder().encodeToString(cipherText)
-        println("from encrypt : ${cipherText.decodeToString()}")
+        //println("from encrypt : ${String(cipherText)}")
         edit.putString("cipherText",cipherText.decodeToString())
         edit.apply()
 
@@ -118,9 +150,22 @@ class EncryptFragment : Fragment() {
 
         val getData = myAct.returnEncData()
 
+        val bitmap = Bitmap.createScaledBitmap(bitmapOriginal, 640, 480, true)
+        println("CipherText $cipherText")
+
+        //val input = "Hello my name is Saksham"
+        //val cipherString = buildString(cipherText,"encrypt")
+        //val input = binding.editTextTextMultiLine.text.toString().trim()
+        //println("Cipher String : ${cipherString}")
+        val byteArr = message.toByteArray()
+        val modifiedBitmap = embed(bitmap, byteArr)
+        saveBitmapImage(modifiedBitmap)
+        storeMessage(message)
+
         //Toast.makeText(activity,ivValue.toString() + " " + cipherText.toString(),Toast.LENGTH_SHORT).show()
         //Toast.makeText(activity,cipherText.toString(),Toast.LENGTH_SHORT).show()
-        decryptMessage(getData)
+
+        //decryptMessage(getData)
 
     }
 
@@ -138,7 +183,7 @@ class EncryptFragment : Fragment() {
         val key = generateKey(binding.editTextKey.text.toString())
         cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(ivValue))
         val cipherText = cipher.doFinal(dataToDecrypt)
-        //val decryptedMessage = buildString(cipherText, "decrypt")
+        val decryptedMessage = buildString(cipherText, "decrypt")
         val decompressedMessage = ungzip(cipherText)
 
         Toast.makeText(activity,decompressedMessage,Toast.LENGTH_SHORT).show()
@@ -161,6 +206,145 @@ class EncryptFragment : Fragment() {
         }
         return sb.toString()
     }
+
+    fun Int.toBinaryString(): String {
+        return Integer.toBinaryString(this)
+    }
+
+    fun embed(originalBitmap: Bitmap, byteArr: ByteArray): Bitmap {
+        val modifiedBitmap = originalBitmap.copy(originalBitmap.config, true)
+
+        //val input = "Hello"
+        val messageSize = byteArr.size
+        //val byteArr: ByteArray = byteArrayOf(4)
+        //val byteArr = input.toByteArray()
+
+        val sizeBin = messageSize.toString(2).padStart(8, '0')
+        println("Size in string " + messageSize.toString(2).padStart(8, '0'))
+
+        for (x in 0 until 8) {
+            val pixel = modifiedBitmap.getPixel(x, 0)
+            val red = Color.red(pixel)
+            val green = Color.green(pixel)
+            val blue = Color.blue(pixel)
+            val binaryBlue = blue.toBinaryString().padStart(8, '0')
+            val temp = binaryBlue.substring(0, 7) + sizeBin[x]
+            val modBlueInt = temp.toInt(2)
+
+            modifiedBitmap.setPixel(x, 0, Color.rgb(red, green, modBlueInt))
+
+        }
+        var x = 8
+        var y = 0
+        var byteArrIndex = 0
+
+        while (y < modifiedBitmap.height && byteArrIndex < byteArr.size) {
+            while (x < modifiedBitmap.width && byteArrIndex < byteArr.size) {
+                val temp = byteArr[byteArrIndex].toInt().toString(2).padStart(8, '0')
+                for (i in 0 until temp.length) {
+                    val pixel = modifiedBitmap.getPixel(x, y)
+                    val red = Color.red(pixel)
+                    val green = Color.green(pixel)
+                    val blue = Color.blue(pixel)
+                    val binaryBlue = blue.toBinaryString().padStart(8, '0')
+
+                    val temp2 = binaryBlue.substring(0, 8) + temp[i]
+                    val modBlueInt = temp2.toInt(2)
+
+                    modifiedBitmap.setPixel(x, y, Color.rgb(red, green, modBlueInt))
+
+                    x++
+                }
+
+                byteArrIndex++
+            }
+            y++
+            x = 0
+        }
+
+        return modifiedBitmap
+    }
+
+
+    fun ByteArrayToString(byteArr:ByteArray): String{
+        return String(byteArr)
+    }
+
+    private fun saveBitmapImage(bitmap: Bitmap) {
+        val timestamp = System.currentTimeMillis()
+
+        //Tell the media scanner about the new file so that it is immediately available to the user.
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        values.put(MediaStore.Images.Media.DATE_ADDED, timestamp)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            values.put(MediaStore.Images.Media.DATE_TAKEN, timestamp)
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + getString(R.string.app_name))
+            values.put(MediaStore.Images.Media.IS_PENDING, true)
+            val uri = requireActivity().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                try {
+                    val outputStream = requireActivity().contentResolver.openOutputStream(uri)
+                    if (outputStream != null) {
+                        try {
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                            outputStream.close()
+                        } catch (e: Exception) {
+                            Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
+                        }
+                    }
+                    values.put(MediaStore.Images.Media.IS_PENDING, false)
+                    requireActivity().contentResolver.update(uri, values, null, null)
+
+                    Toast.makeText(activity, "Saved...", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
+                }
+            }
+        } else {
+            val imageFileFolder = File(Environment.getExternalStorageDirectory().toString() + '/' + getString(R.string.app_name))
+            if (!imageFileFolder.exists()) {
+                imageFileFolder.mkdirs()
+            }
+            val mImageName = "$timestamp.png"
+            val imageFile = File(imageFileFolder, mImageName)
+            try {
+                val outputStream: OutputStream = FileOutputStream(imageFile)
+                try {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                    outputStream.close()
+                } catch (e: Exception) {
+                    Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
+                }
+                values.put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+                requireActivity().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+                Toast.makeText(activity, "Saved...", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
+            }
+        }
+    }
+
+    fun storeMessage(input:String)
+    {
+
+        val userMap = hashMapOf(
+            "message" to input
+        )
+
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        //val count = db.collection(userId).count()
+        //count++
+        db.collection(userId).add(userMap)
+            .addOnSuccessListener {
+                Toast.makeText(activity,"Successfully Added", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity,"Upload Failed", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 
 
 }

@@ -35,6 +35,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity = "center"
                 android:scaleType="centerCrop"
+                android:elevation="30dp"
+                />
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity = "center"
+                android:scaleType="centerCrop"
                 android:src="@drawable/default_image"
                 />
         </androidx.cardview.widget.CardView>

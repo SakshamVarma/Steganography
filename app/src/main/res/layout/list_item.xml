@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/cream"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="5dp"
+    android:layout_marginHorizontal="5dp"
+    app:cardCornerRadius="5dp"
+    android:elevation="10dp"
+    >
+
+    <TextView
+        android:id="@+id/textViewMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="5dp"
+        android:layout_marginHorizontal="10dp"
+        android:text="Message"
+        android:paddingStart="10dp"
+        android:layout_margin="20dp"
+        android:textSize="20sp"/>
+
+</androidx.cardview.widget.CardView>
