@@ -126,6 +126,7 @@ class EncryptFragment : Fragment() {
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val cipherText = cipher.doFinal(plainText)
         ivValue = cipher.iv
+        println("IV Value : $ivValue")
 
 
         edit.putString("ivVal",ivValue.toString())

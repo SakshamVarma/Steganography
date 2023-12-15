@@ -78,6 +78,7 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="20dp"
             android:hint="Enter Message"
+            android:maxLength="100"
             android:inputType="text" />
 
         <TextView
@@ -102,6 +103,7 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="20dp"
             android:hint="Enter secret key"
+            android:maxLength="4"
             android:inputType="number" />
 
         <Button

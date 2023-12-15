@@ -67,25 +67,6 @@ class DecryptFragment : Fragment() {
         }
 
         binding.decryptButton.setOnClickListener {
-//            val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("ivValue",
-//                Context.MODE_PRIVATE)
-//            val tempMessage1 : String? = sharedPreferences.getString("cipherText","default")
-//
-//            val myAct = activity as? MainActivity
-//            val tempMessage = myAct!!.returnEncData()
-//
-//
-//            println("from with conversion : ${tempMessage1!!.toByteArray(Charsets.UTF_8)}")
-//            println("from shared pref : ${tempMessage1}")
-//            println("from without conversion : ${tempMessage}")
-
-
-            //val tempiv : String? = sharedPreferences.getString("ivVal","default")
-
-            //val temp = binding.editTextTextMultiLine
-            //temp.setText(tempMessage.toString())
-
-                //decryptMessage(tempMessage)
 
             val imageViewObj = binding.imageView.drawable
             if(imageViewObj != null){
@@ -129,19 +110,12 @@ class DecryptFragment : Fragment() {
         GZIPInputStream(content.inputStream()).bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
     private fun decryptMessage(dataToDecrypt:ByteArray):ByteArray {
-
         val myAct = activity as? MainActivity
         ivValue = myAct!!.returnIV()
-
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
         val key = generateKey(binding.editTextKey.text.toString().trim())
         cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(ivValue))
         val cipherText = cipher.doFinal(dataToDecrypt)
-        //ivValue = cipher.iv
-        //val decryptedMessage = buildString(cipherText, "decrypt")
-        //val decompressedMessage = ungzip(cipherText)
-
-        //Toast.makeText(activity,decompressedMessage, Toast.LENGTH_SHORT).show()
         return cipherText
     }
 
@@ -210,12 +184,6 @@ class DecryptFragment : Fragment() {
 
         return byteArr
 
-    }
-
-
-
-    fun ByteArrayToString(byteArr:ByteArray): String{
-        return String(byteArr)
     }
 
 
