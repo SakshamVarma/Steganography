@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -37,10 +38,7 @@ class EncryptFragment : Fragment() {
     private var _binding: FragmentEncryptBinding? = null
     private val binding get() =_binding!!
     lateinit var ivValue: ByteArray
-    //lateinit var inputBitmap:Bitmap
-    lateinit var finalImage: Bitmap
     private var db = Firebase.firestore
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,15 +56,7 @@ class EncryptFragment : Fragment() {
             val galleryUri = it
             try{
                 val inputBitmap = uriToBitmap(galleryUri!!)
-//                if (bitmap != null) {
-//                    inputImage = bitmap
-//                    finalImage = encodeLSB(inputImage, "Saksham")
-//                    //val returnMes = decodeLSB(finalImage)
-//                    //Toast.makeText(activity,returnMes,Toast.LENGTH_SHORT).show()
-//                }
                 binding.imageView.setImageBitmap(inputBitmap)
-
-
 
             }catch(e:Exception){
                 e.printStackTrace()
@@ -157,8 +147,9 @@ class EncryptFragment : Fragment() {
         //val cipherString = buildString(cipherText,"encrypt")
         //val input = binding.editTextTextMultiLine.text.toString().trim()
         //println("Cipher String : ${cipherString}")
+        val compressedMessage = gzip(message)
         val byteArr = message.toByteArray()
-        val modifiedBitmap = embed(bitmap, byteArr)
+        val modifiedBitmap = embed(bitmap, compressedMessage)
         saveBitmapImage(modifiedBitmap)
         storeMessage(message)
 
@@ -170,11 +161,6 @@ class EncryptFragment : Fragment() {
     }
 
     private fun decryptMessage(dataToDecrypt:ByteArray) {
-
-//        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("ivValue",
-//            Context.MODE_PRIVATE)
-//        val temp = sharedPreferences.getString("ivVal","default")
-//        ivValue = temp!!.toByteArray()
 
         val myAct = activity as? MainActivity
         ivValue = myAct!!.returnIV()
@@ -214,10 +200,11 @@ class EncryptFragment : Fragment() {
     fun embed(originalBitmap: Bitmap, byteArr: ByteArray): Bitmap {
         val modifiedBitmap = originalBitmap.copy(originalBitmap.config, true)
 
-        //val input = "Hello"
-        val messageSize = byteArr.size
-        //val byteArr: ByteArray = byteArrayOf(4)
-        //val byteArr = input.toByteArray()
+        val byteStr = Base64.encodeToString(byteArr, Base64.DEFAULT).padStart(8,'0')
+        println("byteStr : $byteStr")
+        val byteStrByteArr = byteStr.toByteArray()
+
+        val messageSize = byteStrByteArr.size
 
         val sizeBin = messageSize.toString(2).padStart(8, '0')
         println("Size in string " + messageSize.toString(2).padStart(8, '0'))
@@ -237,10 +224,13 @@ class EncryptFragment : Fragment() {
         var x = 8
         var y = 0
         var byteArrIndex = 0
+        //println("Byte Array : $byteArr")
 
-        while (y < modifiedBitmap.height && byteArrIndex < byteArr.size) {
-            while (x < modifiedBitmap.width && byteArrIndex < byteArr.size) {
-                val temp = byteArr[byteArrIndex].toInt().toString(2).padStart(8, '0')
+
+        while (y < modifiedBitmap.height && byteArrIndex < byteStrByteArr.size) {
+            while (x < modifiedBitmap.width && byteArrIndex < byteStrByteArr.size) {
+                val temp = byteStrByteArr[byteArrIndex].toInt().toString(2).padStart(8, '0')
+
                 for (i in 0 until temp.length) {
                     val pixel = modifiedBitmap.getPixel(x, y)
                     val red = Color.red(pixel)
@@ -248,7 +238,10 @@ class EncryptFragment : Fragment() {
                     val blue = Color.blue(pixel)
                     val binaryBlue = blue.toBinaryString().padStart(8, '0')
 
-                    val temp2 = binaryBlue.substring(0, 8) + temp[i]
+                    //println("-----Temp : ${temp}")
+                    //println("-----Temp i : ${temp[i]}")
+
+                    val temp2 = binaryBlue.substring(0, 7) + temp[i]
                     val modBlueInt = temp2.toInt(2)
 
                     modifiedBitmap.setPixel(x, y, Color.rgb(red, green, modBlueInt))

@@ -91,8 +91,13 @@ class DecryptFragment : Fragment() {
             if(imageViewObj != null){
                 val modifiedBitmap: Bitmap = binding.imageView.drawable.toBitmap()
                 val ansArr = decode(modifiedBitmap)
+                println("AnsARR : ${ansArr[0]}")
+                val baseStr = ansArr.toString(Charsets.UTF_8)
+                println("Base Str : $baseStr")
+                val decodedStr = Base64.decode(baseStr,Base64.DEFAULT)
+                val decompressedStr = ungzip(decodedStr)
 
-                Toast.makeText(activity,ByteArrayToString(ansArr),Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity,decompressedStr,Toast.LENGTH_SHORT).show()
             }
             else
             {
@@ -148,14 +153,6 @@ class DecryptFragment : Fragment() {
         return secretKeySpec
     }
 
-//    private fun buildString(text: ByteArray, status: String): String{
-//        val sb = StringBuilder()
-//        for (char in text) {
-//            sb.append(char.toInt().toChar())
-//        }
-//        return sb.toString()
-//    }
-
     fun Int.toBinaryString(): String {
         return Integer.toBinaryString(this)
     }
@@ -208,66 +205,12 @@ class DecryptFragment : Fragment() {
             y++
             x = 0
         }
+
         return byteArr
 
     }
 
 
-    private fun saveBitmapImage(bitmap: Bitmap) {
-        val timestamp = System.currentTimeMillis()
-
-        //Tell the media scanner about the new file so that it is immediately available to the user.
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-        values.put(MediaStore.Images.Media.DATE_ADDED, timestamp)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            values.put(MediaStore.Images.Media.DATE_TAKEN, timestamp)
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + getString(R.string.app_name))
-            values.put(MediaStore.Images.Media.IS_PENDING, true)
-            val uri = requireActivity().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-            if (uri != null) {
-                try {
-                    val outputStream = requireActivity().contentResolver.openOutputStream(uri)
-                    if (outputStream != null) {
-                        try {
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                            outputStream.close()
-                        } catch (e: Exception) {
-                            Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
-                        }
-                    }
-                    values.put(MediaStore.Images.Media.IS_PENDING, false)
-                    requireActivity().contentResolver.update(uri, values, null, null)
-
-                    Toast.makeText(activity, "Saved...", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
-                }
-            }
-        } else {
-            val imageFileFolder = File(Environment.getExternalStorageDirectory().toString() + '/' + getString(R.string.app_name))
-            if (!imageFileFolder.exists()) {
-                imageFileFolder.mkdirs()
-            }
-            val mImageName = "$timestamp.png"
-            val imageFile = File(imageFileFolder, mImageName)
-            try {
-                val outputStream: OutputStream = FileOutputStream(imageFile)
-                try {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                    outputStream.close()
-                } catch (e: Exception) {
-                    Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
-                }
-                values.put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
-                requireActivity().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-
-                Toast.makeText(activity, "Saved...", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "saveBitmapImage: ", e)
-            }
-        }
-    }
 
     fun ByteArrayToString(byteArr:ByteArray): String{
         return String(byteArr)
