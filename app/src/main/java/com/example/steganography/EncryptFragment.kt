@@ -117,44 +117,46 @@ class EncryptFragment : Fragment() {
         val compressMessage = gzip(message)
         val plainText = compressMessage
 
-        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("ivValue",
-            Context.MODE_PRIVATE)
-        val edit : SharedPreferences.Editor = sharedPreferences.edit()
+//        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("ivValue",
+//            Context.MODE_PRIVATE)
+//        val edit : SharedPreferences.Editor = sharedPreferences.edit()
 
         val key = generateKey(binding.editTextKey.text.toString())
+
+        val iv = ByteArray(16)
+        val ivSpec = IvParameterSpec(iv)
+
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, key)
+        cipher.init(Cipher.ENCRYPT_MODE, key,ivSpec)
         val cipherText = cipher.doFinal(plainText)
+
+        val combined = ByteArray(iv.size + cipherText.size)
+        System.arraycopy(iv, 0, combined, 0, iv.size)
+        System.arraycopy(cipherText, 0, combined, iv.size, cipherText.size)
+
         ivValue = cipher.iv
         println("IV Value : $ivValue")
 
 
-        edit.putString("ivVal",ivValue.toString())
-        edit.putString("cipherText",cipherText.decodeToString())
-        edit.apply()
+//        edit.putString("ivVal",ivValue.toString())
+//        edit.putString("cipherText",cipherText.decodeToString())
+//        edit.apply()
 
-        val myAct = activity as? MainActivity
-        myAct!!.updateIV(ivValue)
-        myAct.updateEncData(cipherText)
-
-        val getData = myAct.returnEncData()
+//        val myAct = activity as? MainActivity
+//        myAct!!.updateIV(ivValue)
+//        myAct.updateEncData(cipherText)
 
         val bitmap = Bitmap.createScaledBitmap(bitmapOriginal, 640, 480, true)
-        println("CipherText $cipherText")
+        println("CipherText Combined $combined")
 
 
         //val compressedMessage = gzip(message)
         //val modifiedBitmap = embed(bitmap, compressedMessage)
 
-        val modifiedBitmap = embed(bitmap, cipherText)
+        val modifiedBitmap = embed(bitmap, combined)
 
         saveBitmapImage(modifiedBitmap)
         storeMessage(message)
-
-        //Toast.makeText(activity,ivValue.toString() + " " + cipherText.toString(),Toast.LENGTH_SHORT).show()
-        //Toast.makeText(activity,cipherText.toString(),Toast.LENGTH_SHORT).show()
-
-        //decryptMessage(getData)
 
     }
 

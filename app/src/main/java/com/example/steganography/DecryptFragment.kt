@@ -105,20 +105,22 @@ class DecryptFragment : Fragment() {
         return null
     }
 
-
     private fun ungzip(content: ByteArray): String =
-        GZIPInputStream(content.inputStream()).bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
+        GZIPInputStream(content.inputStream()).bufferedReader(StandardCharsets.UTF_8).use { it.readText()
+        }
 
     private fun decryptMessage(dataToDecrypt:ByteArray):ByteArray {
-        val myAct = activity as? MainActivity
-        ivValue = myAct!!.returnIV()
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+        val iv = ByteArray(16)
+        val ivSpec = IvParameterSpec(iv)
+        val cipherText2 = ByteArray(dataToDecrypt.size - iv.size)
+        System.arraycopy(dataToDecrypt, 0, iv, 0, iv.size)
+        System.arraycopy(dataToDecrypt, iv.size, cipherText2, 0, cipherText2.size)
         val key = generateKey(binding.editTextKey.text.toString().trim())
-        cipher.init(Cipher.DECRYPT_MODE, key, IvParameterSpec(ivValue))
-        val cipherText = cipher.doFinal(dataToDecrypt)
+        cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
+        val cipherText = cipher.doFinal(cipherText2)
         return cipherText
     }
-
 
     private fun generateKey(password: String): SecretKeySpec {
         val digest: MessageDigest = MessageDigest.getInstance("SHA-256")
