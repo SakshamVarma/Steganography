@@ -6,9 +6,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Toast
 import com.example.steganography.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
 class loginActivity : AppCompatActivity() {
 
@@ -20,9 +22,6 @@ class loginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //disable Login Button
-//        binding.loginButton.isEnabled = false
-//        binding.loginButton.isClickable = false
 
         binding.signUpText.setOnClickListener {
             val loginIntent = Intent(this, signupActivity::class.java)
@@ -36,31 +35,42 @@ class loginActivity : AppCompatActivity() {
 
             if(isOnline(this)){
 
-            if (email.isNotEmpty() && password.isNotEmpty()) {
+            if (email.isNotEmpty() && password.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 binding.emailEt.error = null
                 binding.passwordEt.error = null
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
+                        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
                         val loginIntent = Intent(this, MainActivity::class.java)
                         startActivity(loginIntent)
                     } else {
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Authentication failed.",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+
                     }
+                }.addOnFailureListener {
+                    Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
                 }
+
             } else {
                 if(email.isEmpty())
                     binding.emailEt.error = "Cannot be Empty"
                 if(password.isEmpty())
                     binding.passwordEt.error = "Cannot be Empty"
-                //Toast.makeText(this, "Empty Fields Not Allowed", Toast.LENGTH_SHORT).show()
+                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+                {
+                    binding.emailEt.error = "Invalid Email Address"
+                }
             }
         }
             else{
                 Toast.makeText(this, "You're Offline", Toast.LENGTH_SHORT).show()
             }
-
         }
-
 
 
     }

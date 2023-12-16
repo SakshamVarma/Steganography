@@ -55,7 +55,7 @@ class DecryptFragment : Fragment() {
             try{
                 val bitmap = uriToBitmap(galleryUri!!)
                 binding.imageView.setImageBitmap(bitmap)
-                binding.TextViewTextMultiLine.text = bitmap.toString()
+                //binding.TextViewTextMultiLine.text = bitmap.toString()
             }catch(e:Exception){
                 e.printStackTrace()
             }
@@ -70,16 +70,29 @@ class DecryptFragment : Fragment() {
 
             val imageViewObj = binding.imageView.drawable
             if(imageViewObj != null){
-                val modifiedBitmap: Bitmap = binding.imageView.drawable.toBitmap()
-                val ansArr = decode(modifiedBitmap)
-                println("AnsARR : ${ansArr[0]}")
-                val baseStr = ansArr.toString(Charsets.UTF_8)
-                println("Base Str : $baseStr")
-                val decodedStr = Base64.decode(baseStr,Base64.DEFAULT)
-                val decryptStr = decryptMessage(decodedStr)
-                val decompressedStr = ungzip(decryptStr)
+                try {
+                    val modifiedBitmap: Bitmap = binding.imageView.drawable.toBitmap()
+                    val ansArr = decode(modifiedBitmap)
+                    println("AnsARR : ${ansArr[0]}")
+                    val baseStr = ansArr.toString(Charsets.UTF_8)
+                    println("Base Str : $baseStr")
+                    val decodedStr = Base64.decode(baseStr, Base64.DEFAULT)
+                    val decryptStr = decryptMessage(decodedStr)
+                    val decompressedStr = ungzip(decryptStr)
 
-                Toast.makeText(activity,decompressedStr,Toast.LENGTH_SHORT).show()
+
+                    binding.TextViewAnswer.text = decompressedStr
+                    binding.messageTitle.visibility = View.VISIBLE
+                    binding.TextViewAnswer.visibility = View.VISIBLE
+
+
+
+                    //Toast.makeText(activity, decompressedStr, Toast.LENGTH_SHORT).show()
+                }
+                catch (e:Exception)
+                {
+                    Toast.makeText(activity, "Invalid Image or PIN", Toast.LENGTH_SHORT).show()
+                }
             }
             else
             {
@@ -92,6 +105,8 @@ class DecryptFragment : Fragment() {
     }
 
     private fun uriToBitmap(selectedFileUri: Uri): Bitmap? {
+        binding.messageTitle.visibility = View.INVISIBLE
+        binding.TextViewAnswer.visibility = View.INVISIBLE
         try {
             val parcelFileDescriptor =
                 context?.contentResolver?.openFileDescriptor(selectedFileUri, "r")

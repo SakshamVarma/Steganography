@@ -109,54 +109,40 @@ class EncryptFragment : Fragment() {
         return bos.toByteArray()
     }
 
-    private fun ungzip(content: ByteArray): String =
-        GZIPInputStream(content.inputStream()).bufferedReader(UTF_8).use { it.readText() }
-
     private fun encryptMessage(bitmapOriginal:Bitmap) {
         val message = binding.editTextTextMultiLine.text.toString().trim()
-        val compressMessage = gzip(message)
-        val plainText = compressMessage
+        val inputKey = binding.editTextKey.text.toString()
 
-//        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("ivValue",
-//            Context.MODE_PRIVATE)
-//        val edit : SharedPreferences.Editor = sharedPreferences.edit()
+        if(message.isNotEmpty() && inputKey.isNotEmpty()){
+            val key = generateKey(binding.editTextKey.text.toString())
+            val compressMessage = gzip(message)
+            val plainText = compressMessage
 
-        val key = generateKey(binding.editTextKey.text.toString())
+            val iv = ByteArray(16)
+            val ivSpec = IvParameterSpec(iv)
 
-        val iv = ByteArray(16)
-        val ivSpec = IvParameterSpec(iv)
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
+            val cipherText = cipher.doFinal(plainText)
 
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, key,ivSpec)
-        val cipherText = cipher.doFinal(plainText)
+            val combined = ByteArray(iv.size + cipherText.size)
+            System.arraycopy(iv, 0, combined, 0, iv.size)
+            System.arraycopy(cipherText, 0, combined, iv.size, cipherText.size)
 
-        val combined = ByteArray(iv.size + cipherText.size)
-        System.arraycopy(iv, 0, combined, 0, iv.size)
-        System.arraycopy(cipherText, 0, combined, iv.size, cipherText.size)
+            val bitmap = Bitmap.createScaledBitmap(bitmapOriginal, 640, 480, true)
 
-        ivValue = cipher.iv
-        println("IV Value : $ivValue")
+            val modifiedBitmap = embed(bitmap, combined)
 
-
-//        edit.putString("ivVal",ivValue.toString())
-//        edit.putString("cipherText",cipherText.decodeToString())
-//        edit.apply()
-
-//        val myAct = activity as? MainActivity
-//        myAct!!.updateIV(ivValue)
-//        myAct.updateEncData(cipherText)
-
-        val bitmap = Bitmap.createScaledBitmap(bitmapOriginal, 640, 480, true)
-        println("CipherText Combined $combined")
-
-
-        //val compressedMessage = gzip(message)
-        //val modifiedBitmap = embed(bitmap, compressedMessage)
-
-        val modifiedBitmap = embed(bitmap, combined)
-
-        saveBitmapImage(modifiedBitmap)
-        storeMessage(message)
+            saveBitmapImage(modifiedBitmap)
+            storeMessage(message)
+        }
+        else
+        {
+            if(message.isEmpty())
+                binding.editTextTextMultiLine.error = "Cannot Be Empty"
+            if(inputKey.isEmpty())
+                binding.editTextKey.error = "Cannot Be Empty"
+        }
 
     }
 
@@ -223,9 +209,6 @@ class EncryptFragment : Fragment() {
                     val blue = Color.blue(pixel)
                     val binaryBlue = blue.toBinaryString().padStart(8, '0')
 
-                    //println("-----Temp : ${temp}")
-                    //println("-----Temp i : ${temp[i]}")
-
                     val temp2 = binaryBlue.substring(0, 7) + temp[i]
                     val modBlueInt = temp2.toInt(2)
 
@@ -244,13 +227,9 @@ class EncryptFragment : Fragment() {
     }
 
 
-    fun ByteArrayToString(byteArr:ByteArray): String{
-        return String(byteArr)
-    }
 
     private fun saveBitmapImage(bitmap: Bitmap) {
         val timestamp = System.currentTimeMillis()
-
         //Tell the media scanner about the new file so that it is immediately available to the user.
         val values = ContentValues()
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
@@ -312,8 +291,7 @@ class EncryptFragment : Fragment() {
         )
 
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        //val count = db.collection(userId).count()
-        //count++
+
         db.collection(userId).add(userMap)
             .addOnSuccessListener {
                 Toast.makeText(activity,"Successfully Added", Toast.LENGTH_SHORT).show()

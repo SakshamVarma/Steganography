@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.steganography.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
 class signupActivity : AppCompatActivity() {
 
@@ -35,28 +36,41 @@ class signupActivity : AppCompatActivity() {
             val password = binding.editTextPassword.text.toString().trim()
             val confirm_password = binding.editTextRePassword.text.toString().trim()
 
-            if(isOnline(this)){
+                if (isOnline(this)) {
 
-            if (email.isNotEmpty() && password.isNotEmpty() && confirm_password.isNotEmpty()) {
-                if (password == confirm_password) {
-                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val loginIntent = Intent(this, loginActivity::class.java)
-                            startActivity(loginIntent)
+                    if (email.isNotEmpty() && password.isNotEmpty() && confirm_password.isNotEmpty()) {
+                        if (password == confirm_password) {
+                            auth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+                                        val loginIntent = Intent(this, loginActivity::class.java)
+                                        startActivity(loginIntent)
+                                    } else {
+                                        if(it.exception is FirebaseAuthUserCollisionException)
+                                        {
+                                            Toast.makeText(this, "Account already exist !!", Toast.LENGTH_SHORT).show()
+                                            val loginIntent = Intent(this, loginActivity::class.java)
+                                            startActivity(loginIntent)
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(this, "Authentication Failed", Toast.LENGTH_SHORT).show()
+                                        }
+
+                                    }
+                                }
                         } else {
-                            Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Password Doesn't Match", Toast.LENGTH_SHORT)
+                                .show()
                         }
+                    } else {
+                        Toast.makeText(this, "Empty Fields Not Allowed", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Password Doesn't Match", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "You're Offline", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Empty Fields Not Allowed", Toast.LENGTH_SHORT).show()
-            }
-        }
-            else{
-                Toast.makeText(this, "You're Offline", Toast.LENGTH_SHORT).show()
-            }
+
         }
 
 
